@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block head_content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/expenses.css' )}}">
+{%endblock%}
+
+{% block main_content %}   
+    <div class="body__section">
+        <section class="section__left">
+            <div class="dates">
+                {% for date in date_range(selected_date) %}
+                    <a 
+                    class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
+                    href="{{ url_for('pages.budget_manager', date=date) }}"
+                    >
+                            <time class="date" datetime="{{ date }}">
+                            <span>{{ date.strftime("%b") }}</span>
+                            <span>{{ date.strftime("%Y") }}</span>
+                        </time>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <a class="button__link" href="{{ url_for('pages.add_expense') }}">
+                <div class="button">+ Add Expense</div>
+            </a>
+            
+            <table class="table">
+                <colgroup>
+                    <col style="width: 60%">
+                    <col style="width: 25%">
+                    <col style="width: 15%">
+                </colgroup>
+    
+                <thead>
+                    <th class="table__cell table__cell--header">Title</th>
+                    <th class="table__cell table__cell--header">Type</th>
+                    <th class="table__cell table__cell--header">Amount</th>
+                    <th class="table__cell table__cell--header"></th>
+                    <th class="table__cell table__cell--header"></th>
+                </thead>
+    
+                <tbody>
+                    {% for expense in expenses_data %}
+                        <tr>
+                            <td class="table__cell table_cell--body">
+                                <p class="table__expenseTitle">{{ expense.title }}</p>
+                            </td>
+                            <td class="table__cell table_cell--body">
+                                <p class="table__expenseType">{{ expense.type }}</p>
+                            </td>
+                            <td class="table__cell table_cell--body">
+                                <p class="table__expenseAmount">${{ expense.amount }}</p>
+                            </td>
+                            <td class="table__cell table_cell--body">
+                                <a class="link" href="#">Edit</a>
+                            </td>
+                            <td class="table__cell table_cell--body">
+                                <a class="link" href="#">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </section>
+
+        <section class="section__right"> 
+            <div class="section__right-block">
+                <div class="total__budget">
+                    <p class="budget__amount">$ {{ budget_amount }}</p>
+                    <p class="budget__text">Total Budget</p>
+                </div>
+                <div class="set__budget">
+                    <div class="">
+                        <a class="button__link" href="{{ url_for('pages.set_budget') }}">
+                            <div class="button">Set Budget</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="section__right-block">
+                <p class="block__text"><b>Budget Left:</b> {{ budget_left }} </p>
+            </div>
+            <div class="section__right-block">
+                <p class="block__text"><b>Expenses:</b> {{ all_expenses }} </p>
+            </div>
+        </section>
+    </div>
+{%endblock%}

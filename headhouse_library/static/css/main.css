@@ -1,0 +1,254 @@
+:root {
+    --text-dark: #fbf2f2;
+    --text-light: #000;
+    --text-muted: #595959;
+  
+    --background-color: #1c2023;
+    --background-color-2: #343a3d;
+    --accent-colour: #f56565;
+    --accent-colour-2: #ff4747;
+    --accent-colour-3: #31d200;
+    --tag-colour: var(--accent-colour-2);
+  
+    --border: 3px solid #fff; 
+    --border_body: 3px solid var(--background-color);
+  }
+
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--accent-colour);
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+    margin-right: 0.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .button:hover {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--accent-colour-2);
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 0.5rem;
+    margin-right: 0.2rem;
+  }
+  
+  .formbutton {
+    display: block;
+    outline: none;
+    cursor: pointer; 
+    font-size: inherit;
+    font-family: inherit;
+    transition: background 0.1s ease-in;
+  }
+
+  .form__field,
+  .nav__link {
+    --border: 3px solid #f56565;
+  }
+  
+  html {
+    /* Sets global font size on small devices */
+    font-size: 12px;
+  }
+  
+  /* When the screen width hits 960px, we increase the global font size to 14px. This changes
+     the scale of all of our relative units (the rems), keeping everything in proportion */
+  @media screen and (min-width: 60em) {
+    html {
+      font-size: 14px;
+    }
+  }
+  
+  /* When the screen width hits 1200px, we once again increase the global font size, this time to 16px */
+  @media screen and (min-width: 75em) {
+    html {
+      font-size: 18px;
+    }
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    /* Sets the shared font characteristics, so that that they can be inherited globally */
+    font-family: "Public Sans", sans-serif;
+    color: var(--text-dark);
+    line-height: 1.45;
+    background-color: var(--background-color);
+  }
+
+  html, body{
+    height: 100%;
+  }
+  
+  .main {
+    flex-grow: 1;
+    padding: 3rem 1.5rem 2rem 1.5rem
+  }
+  
+  @media screen and (min-width: 30em) {
+    .main {
+      padding-top: 1rem;
+    }
+  }
+  
+  .header {
+    padding: 0 2rem;
+    border-bottom: var(--border);
+  }
+  
+  .header__logo {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .logo__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .header__logo:hover {
+    color: var(--accent-colour);
+  }
+  
+  .logo__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .logo__name {
+    margin-left: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 20px;
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 70%;
+    margin: 0 auto;
+  }
+  
+  .nav {
+    display: flex;
+  }
+  
+  .nav__link {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .nav__link--active {
+    background-color: var(--accent-colour);
+    color: var(--text-light);
+  }
+  
+  .nav__link:not(:last-child) {
+    margin-right: 1rem;
+  }
+  
+  .nav__link:hover {
+    margin-bottom: -3px;
+    border-bottom: var(--border);
+  }
+  
+  .nav__item {
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  .nav__icon {
+    width: 1em;
+    height: 1em;
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+  }
+
+  
+  .link {
+    text-decoration: none;
+    color: var(--accent-colour);
+    white-space: nowrap;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
+
+  .body__section {
+    display: flex;
+    margin: 0 auto;
+    /* align-items: center; */
+    width: 70%;
+  }
+ 
+  .section__left {
+    flex-basis: 70%;
+    background-color: var(--background-color);
+    padding-right: 20px;
+  }
+
+  .section__right {
+    flex-basis: 30%;
+    background-color: var(--background-color);
+    padding: 20px;
+    border-left: 1px solid white;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+  } 
+
+  .section__right-block {
+    border-bottom: var(--border);
+    padding-bottom: 2rem 0;
+  }
+
+  .block__text {
+    font-size: 24px;
+    padding: 2rem;
+  }
+
+  .button__link {
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.total__budget {
+    align-items: center;
+    background-color: var(--accent-colour-3);
+    height: 7.5rem;
+    width: 15rem;
+    text-align: center;
+    border-radius: 1rem;
+}
+
+.set__budget {
+    margin-bottom: 1.5rem;
+}
+
+.budget__amount {
+    font-size: 3rem;
+    margin: 0 auto;
+    padding-top: 0.5rem;
+}
+
+.budget__text {
+    font-size: 1rem;
+    margin: 0 auto;
+}
+

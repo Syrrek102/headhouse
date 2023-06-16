@@ -1,0 +1,3 @@
+FLASK_APP=headhouse_library
+FLASK_ENV=development
+FLASK_DEBUG=1
