@@ -1,10 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, date
 
-@dataclass
-class Date:
-    _id: str
-    expenses: list[str] = field(default_factory=list)
 
 @dataclass
 class Budget:
@@ -17,5 +13,6 @@ class Expense:
     title: str
     type: str
     amount: float
+    date: str
 
 

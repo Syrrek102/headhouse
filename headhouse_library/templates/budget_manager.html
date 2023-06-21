@@ -7,21 +7,8 @@
 {% block main_content %}   
     <div class="body__section">
         <section class="section__left">
-            <div class="dates">
-                {% for date in date_range(selected_date) %}
-                    <a 
-                    class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
-                    href="{{ url_for('pages.budget_manager', date=date) }}"
-                    >
-                            <time class="date" datetime="{{ date }}">
-                            <span>{{ date.strftime("%b") }}</span>
-                            <span>{{ date.strftime("%Y") }}</span>
-                        </time>
-                    </a>
-                {% endfor %}
-            </div>
-
-            <a class="button__link" href="{{ url_for('pages.add_expense') }}">
+            <h1>{{date}}</h1>
+            <a class="button__link" href="{{ url_for('pages.add_expense', date=date) }}">
                 <div class="button">+ Add Expense</div>
             </a>
             

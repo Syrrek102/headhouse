@@ -30,24 +30,29 @@ def date_range(start: datetime.date):
 
 @pages.route("/")
 def index():
-    return render_template("index.html", title="HEADHOUSE")
-
-@pages.route("/budget_manager")
-def budget_manager():
     date_str = request.args.get("date")
+
     if date_str:
         selected_date = datetime.date.fromisoformat(date_str)
     else:
         selected_date = datetime.date.today()
-    
 
-    expense_data = current_app.db.expense.find({})
+    return render_template(
+        "index.html", 
+        title="HEADHOUSE",
+        date_range=date_range,
+        selected_date=selected_date,
+        )
+
+@pages.route("/budget_manager")
+def budget_manager():
+    date = request.args.get("date")
+
+    expense_data = current_app.db.expense.find({"date": date})
     expenses = [Expense(**expense) for expense in expense_data]
 
 
-    # Sprawdzanie czy jest jakakolwiek wartosc w bazie budget, jezeli nie ustawia domyslna wartosc 0
-
-    budget_document = current_app.db.budget.find_one({})
+    budget_document = current_app.db.budget.find_one({"date": date})
     budget_amount = 0
 
     if budget_document is None:
@@ -56,7 +61,6 @@ def budget_manager():
     else:
         budget_amount = budget_document["amount"]
 
-    # Sumuje wartości amount dla wszystkich dokumentów
     total_expenses = sum(expense.amount for expense in expenses)
     budget_left = budget_amount - total_expenses
 
@@ -64,17 +68,15 @@ def budget_manager():
     return render_template(
         "budget_manager.html", 
         title="HEADHOUSE | BudgetManager",
-        date_range=date_range, 
-        selected_date=selected_date,
         budget_amount=budget_amount,
         expenses_data=expenses,
         budget_left=budget_left,
-        all_expenses=total_expenses
+        all_expenses=total_expenses,
+        date=date
         )
 
-
-@pages.route("/add_expense", methods=["GET", "POST"])
-def add_expense():
+@pages.route("/add_expense/<date>", methods=["GET", "POST"])
+def add_expense(date):
     form = ExpenseForm()
 
     if form.validate_on_submit():
@@ -82,12 +84,13 @@ def add_expense():
             _id= uuid.uuid4().hex,
             title = form.title.data,
             type = form.type.data,
-            amount = form.amount.data
+            amount = form.amount.data,
+            date=date
         )
 
         current_app.db.expense.insert_one(asdict(expense))
 
-        return redirect(url_for(".budget_manager"))
+        return redirect(url_for(".budget_manager", date=date))
 
     return render_template(
         "add_expense.html", 
