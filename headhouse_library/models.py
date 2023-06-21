@@ -6,6 +6,7 @@ from datetime import datetime, date
 class Budget:
     _id: str
     amount: float
+    date: str
 
 @dataclass
 class Expense:

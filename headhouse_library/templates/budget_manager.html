@@ -7,7 +7,11 @@
 {% block main_content %}   
     <div class="body__section">
         <section class="section__left">
-            <h1>{{date}}</h1>
+
+            <div class="header__calendar">
+                <h1>{{ date }}</h1>
+            </div>
+
             <a class="button__link" href="{{ url_for('pages.add_expense', date=date) }}">
                 <div class="button">+ Add Expense</div>
             </a>
@@ -60,17 +64,17 @@
                 </div>
                 <div class="set__budget">
                     <div class="">
-                        <a class="button__link" href="{{ url_for('pages.set_budget') }}">
+                        <a class="button__link" href="{{ url_for('pages.set_budget', date=date) }}">
                             <div class="button">Set Budget</div>
                         </a>
                     </div>
                 </div>
             </div>
             <div class="section__right-block">
-                <p class="block__text"><b>Budget Left:</b> {{ budget_left }} </p>
+                <p class="block__text">Budget Left: <span class="link">{{ budget_left }}</span> </p>
             </div>
             <div class="section__right-block">
-                <p class="block__text"><b>Expenses:</b> {{ all_expenses }} </p>
+                <p class="block__text">Expenses:<span class="link">{{ all_expenses }}</span> </p>
             </div>
         </section>
     </div>

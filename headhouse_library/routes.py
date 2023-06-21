@@ -56,7 +56,7 @@ def budget_manager():
     budget_amount = 0
 
     if budget_document is None:
-        default_budget = Budget(_id=uuid.uuid4().hex, amount=0)
+        default_budget = Budget(_id=uuid.uuid4().hex, date=date, amount=0)
         current_app.db.budget.insert_one(asdict(default_budget))
     else:
         budget_amount = budget_document["amount"]
@@ -98,20 +98,21 @@ def add_expense(date):
         form=form
         )
 
-@pages.route("/set_budget", methods=["GET", "POST"])
-def set_budget():
+@pages.route("/set_budget/<date>", methods=["GET", "POST"])
+def set_budget(date):
     form = BudgetForm()
 
     if form.validate_on_submit():
         budget = Budget(
             _id= uuid.uuid4().hex,
             amount = form.amount.data,
+            date=date
         )
         
-        current_app.db.budget.delete_one({})
+        current_app.db.budget.delete_one({"date": date})
         current_app.db.budget.insert_one(asdict(budget))
 
-        return redirect(url_for(".budget_manager"))
+        return redirect(url_for(".budget_manager", date=date))
     
     return render_template(
         "set_budget.html", 

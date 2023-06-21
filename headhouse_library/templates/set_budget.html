@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block main_content %}
-    <form name="set_budget" method="post" novalidate class="form" action="{{ url_for('pages.set_budget', date=date) }}">
+    <form name="set_budget" method="post" novalidate class="form">
         <div class="form__container">
             {{ form.hidden_tag() }}
             {{ render_text_field(form.amount) }}
