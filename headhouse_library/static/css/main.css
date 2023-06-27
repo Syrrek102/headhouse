@@ -23,6 +23,7 @@
     margin-top: 0.5rem;
     margin-right: 0.2rem;
     margin-bottom: 1rem;
+    color: var(--text-dark);
   }
 
   .button:hover {
@@ -220,7 +221,6 @@
 
   .button__link {
     text-decoration: none;
-    color: var(--text-dark);
 }
 
 .total__budget {
@@ -252,7 +252,7 @@
   font-size: 150%;
 }
 
-.calendar__section {
+.menu__section {
   display: block;
   margin: 0 auto;
   width: 70%;

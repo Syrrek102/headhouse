@@ -1,10 +1,8 @@
 import uuid
 import datetime
-import functools
 from flask import (
     Blueprint, 
-    render_template, 
-    session, 
+    render_template,  
     redirect, 
     request, 
     current_app, 
@@ -87,7 +85,6 @@ def add_expense(date):
             amount = form.amount.data,
             date=date
         )
-
         current_app.db.expense.insert_one(asdict(expense))
 
         return redirect(url_for(".budget_manager", date=date))
@@ -119,3 +116,19 @@ def set_budget(date):
         title="HEADHOUSE | BudgetManager - SetBudget",
         form=form
         )
+
+@pages.route("/delete_expense/<date>/<expense_id>", methods=["GET", "POST"])
+def delete_expense(date, expense_id):
+    expense = current_app.db.expense.find_one({"_id": expense_id})
+
+    if request.method == "POST":
+        current_app.db.expense.delete_one({"_id": expense_id})
+        flash("Expense deleted successfully.", "success")
+        return redirect(url_for(".budget_manager", date=date))
+
+    return render_template(
+        "delete_expense.html",
+        title="HEADHOUSE | BudgetManager - DeleteExpense",
+        expense=expense,
+        date=date
+    )
