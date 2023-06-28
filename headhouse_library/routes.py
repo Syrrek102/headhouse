@@ -19,6 +19,7 @@ pages = Blueprint(
     "pages", __name__, template_folder="templates", static_folder="static"
 )
 
+
 def date_range(start: datetime.date):
     dates = [
         start.replace(day=1) + relativedelta.relativedelta(months=diff) for diff in range(-5, 7)
@@ -42,22 +43,22 @@ def index():
         selected_date=selected_date,
         )
 
+
 @pages.route("/budget_manager")
 def budget_manager():
     date = request.args.get("date")
 
-    expense_data = current_app.db.expense.find({"date": date})
-    expenses = [Expense(**expense) for expense in expense_data]
+    getExpenses = current_app.db.expense.find({"date": date})
+    expenses = [Expense(**expense) for expense in getExpenses]
 
-
-    budget_document = current_app.db.budget.find_one({"date": date})
+    getBudget = current_app.db.budget.find_one({"date": date})
     budget_amount = 0
-
-    if budget_document is None:
+    
+    if getBudget is None:
         default_budget = Budget(_id=uuid.uuid4().hex, date=date, amount=0)
         current_app.db.budget.insert_one(asdict(default_budget))
     else:
-        budget_amount = budget_document["amount"]
+        budget_amount = getBudget["amount"]
 
     total_expenses = sum(expense.amount for expense in expenses)
     budget_left = budget_amount - total_expenses
@@ -73,7 +74,8 @@ def budget_manager():
         date=date
         )
 
-@pages.route("/add_expense/<date>", methods=["GET", "POST"])
+
+@pages.route("/budget_manager/add_expense/<date>", methods=["GET", "POST"])
 def add_expense(date):
     form = ExpenseForm()
 
@@ -95,7 +97,8 @@ def add_expense(date):
         form=form
         )
 
-@pages.route("/set_budget/<date>", methods=["GET", "POST"])
+
+@pages.route("/budget_manager/set_budget/<date>", methods=["GET", "POST"])
 def set_budget(date):
     form = BudgetForm()
 
@@ -117,7 +120,31 @@ def set_budget(date):
         form=form
         )
 
-@pages.route("/delete_expense/<date>/<expense_id>", methods=["GET", "POST"])
+
+@pages.route("/budget_manager/edit_expense/<date>/<expense_id>", methods=["GET", "POST"])
+def edit_expense(date, expense_id):
+    expense = Expense(**current_app.db.expense.find_one({"_id": expense_id}))
+    form = ExpenseForm(obj=expense)
+    
+    if form.validate_on_submit():
+        expense.title = form.title.data
+        expense.type = form.type.data
+        expense.amount = form.amount.data
+        expense.date=date
+    
+        current_app.db.expense.update_one({"_id" : expense_id}, {"$set": asdict(expense)})
+        return redirect(url_for(".budget_manager", date=date, expense_id=expense._id))
+
+    return render_template(
+        "edit_expense.html",
+        title="HEADHOUSE | BudgetManager - EditExpense",
+        expense=expense,
+        form=form,
+        date=date
+    )
+
+
+@pages.route("/budget_manager/delete_expense/<date>/<expense_id>", methods=["GET", "POST"])
 def delete_expense(date, expense_id):
     expense = current_app.db.expense.find_one({"_id": expense_id})
 
@@ -132,3 +159,5 @@ def delete_expense(date, expense_id):
         expense=expense,
         date=date
     )
+
+

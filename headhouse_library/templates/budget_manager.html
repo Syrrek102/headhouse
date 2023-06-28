@@ -44,7 +44,7 @@
                                 <p class="table__expenseAmount">${{ expense.amount }}</p>
                             </td>
                             <td class="table__cell table_cell--body">
-                                <a class="link" href="#">Edit</a>
+                                <a class="link" href="{{ url_for('pages.edit_expense', date=date, expense_id=expense._id) }}">Edit</a>
                             </td>
                             <td class="table__cell table_cell--body">
                                 <a class="link" href="{{ url_for('pages.delete_expense', date=date, expense_id=expense._id) }}">Delete</a>
@@ -63,11 +63,9 @@
                     <p class="budget__text">Total Budget</p>
                 </div>
                 <div class="set__budget">
-                    <div>
                         <a class="button__link" href="{{ url_for('pages.set_budget', date=date) }}">
                             <div class="button">Set Budget</div>
                         </a>
-                    </div>
                 </div>
             </div>
             <div class="section__right-block">

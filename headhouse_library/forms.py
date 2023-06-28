@@ -24,4 +24,4 @@ class ExpenseForm(FlaskForm):
         ]
     )
 
-    submit = SubmitField("Add Expense")
+    submit = SubmitField("Submit Expense")
