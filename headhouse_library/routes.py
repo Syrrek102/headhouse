@@ -22,7 +22,7 @@ pages = Blueprint(
 
 def date_range(start: datetime.date):
     dates = [
-        start.replace(day=1) + relativedelta.relativedelta(months=diff) for diff in range(-5, 7)
+        start.replace(day=1) + relativedelta.relativedelta(months=diff) for diff in range(-5, 6)
         ]
     return dates
 
@@ -55,7 +55,11 @@ def budget_manager():
     budget_amount = 0
     
     if getBudget is None:
-        default_budget = Budget(_id=uuid.uuid4().hex, date=date, amount=0)
+        default_budget = Budget(
+            _id=uuid.uuid4().hex,
+            amount=0,
+            date=date
+            )
         current_app.db.budget.insert_one(asdict(default_budget))
     else:
         budget_amount = getBudget["amount"]
