@@ -152,6 +152,35 @@ def budget_manager():
         )
 
 
+# @pages.route("/budget_manager/set_budget/<date>", methods=["GET", "POST"])
+# @login_required
+# def set_budget(date):
+#     form = BudgetForm()
+
+#     if form.validate_on_submit():
+#         budget = Budget(
+#             _id= uuid.uuid4().hex,
+#             amount = form.amount.data,
+#             date=date
+#         )
+        
+#         current_app.db.budget.delete_many({"date": date})
+#         current_app.db.budget.insert_one(asdict(budget))
+       
+#         current_app.db.user.update_one(
+#             {"_id": session["user_id"]}, 
+#             {"$push": {"budgets": budget._id}}
+#         )
+
+#         return redirect(url_for(".budget_manager", date=date))
+    
+#     return render_template(
+#         "set_budget.html", 
+#         title="HEADHOUSE | BudgetManager - SetBudget",
+#         form=form
+#         )
+
+
 @pages.route("/budget_manager/set_budget/<date>", methods=["GET", "POST"])
 @login_required
 def set_budget(date):
@@ -159,26 +188,33 @@ def set_budget(date):
 
     if form.validate_on_submit():
         budget = Budget(
-            _id= uuid.uuid4().hex,
-            amount = form.amount.data,
+            _id=uuid.uuid4().hex,
+            amount=form.amount.data,
             date=date
         )
-        
-        current_app.db.budget.delete_many({"date": date})
+
+        user_id = session["user_id"]
+        user = current_app.db.user.find_one({"_id": user_id})
+
+        previous_budget = current_app.db.budget.find_one({"_id": {"$in": user["budgets"]}, "date": date})
+        if previous_budget:
+            current_app.db.budget.delete_many({"_id": previous_budget["_id"]})
+            current_app.db.user.update_one({"_id": user_id}, {"$pull": {"budgets": previous_budget["_id"]}})
+
         current_app.db.budget.insert_one(asdict(budget))
-       
         current_app.db.user.update_one(
-            {"_id": session["user_id"]}, 
+            {"_id": user_id},
             {"$push": {"budgets": budget._id}}
         )
+        flash("Budżet został zapisany.", "success")
 
         return redirect(url_for(".budget_manager", date=date))
-    
+
     return render_template(
-        "set_budget.html", 
+        "set_budget.html",
         title="HEADHOUSE | BudgetManager - SetBudget",
         form=form
-        )
+    )
 
 
 @pages.route("/budget_manager/add_expense/<date>", methods=["GET", "POST"])
@@ -237,10 +273,12 @@ def edit_expense(date, expense_id):
 @pages.route("/budget_manager/delete_expense/<date>/<expense_id>", methods=["GET", "POST"])
 @login_required
 def delete_expense(date, expense_id):
+    user_id = session["user_id"]
     expense = current_app.db.expense.find_one({"_id": expense_id})
 
     if request.method == "POST":
         current_app.db.expense.delete_one({"_id": expense_id})
+        current_app.db.user.update_one({"_id": user_id}, {"$pull": {"expenses": expense_id}})
         flash("Expense deleted successfully.", "success")
         return redirect(url_for(".budget_manager", date=date))
 
