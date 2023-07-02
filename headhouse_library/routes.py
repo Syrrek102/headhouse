@@ -1,5 +1,6 @@
 import uuid
 import datetime
+import functools
 from flask import (
     Blueprint, 
     render_template,  
@@ -8,16 +9,29 @@ from flask import (
     current_app, 
     url_for,
     flash,
+    session
     )
 from dateutil import relativedelta
 from dataclasses import asdict
-from headhouse_library.models import Budget, Expense
-from headhouse_library.forms import BudgetForm, ExpenseForm
+from headhouse_library.models import Budget, Expense, User
+from headhouse_library.forms import BudgetForm, ExpenseForm, RegisterForm, LoginForm
+from passlib.hash import pbkdf2_sha256
 
 
 pages = Blueprint(
     "pages", __name__, template_folder="templates", static_folder="static"
 )
+
+
+def login_required(route):
+    @functools.wraps(route)
+    def route_wrapper(*args, **kwargs):
+        if session.get("email") is None:
+            return redirect(url_for(".login"))
+
+        return route(*args, **kwargs)
+
+    return route_wrapper
 
 
 def date_range(start: datetime.date):
@@ -28,6 +42,7 @@ def date_range(start: datetime.date):
 
 
 @pages.route("/")
+@login_required
 def index():
     date_str = request.args.get("date")
 
@@ -44,14 +59,72 @@ def index():
         )
 
 
+@pages.route("/register", methods=["GET", "POST"])
+def register():
+    if session.get("email"):
+        return redirect(url_for(".index"))
+
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        user = User(
+            _id = uuid.uuid4().hex,
+            email = form.email.data,
+            password = pbkdf2_sha256.hash(form.password.data)
+        )
+        
+        current_app.db.user.insert_one(asdict(user))
+
+        flash("User registered succesfully!", "succes")
+
+        return redirect(url_for(".login"))
+
+    return render_template("register.html", title="HeadHouse - Register", form=form)
+
+
+@pages.route("/login", methods=["GET", "POST"])
+def login():
+    if session.get("email"):
+        return redirect(url_for(".index"))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user_data = current_app.db.user.find_one({"email": form.email.data})
+        if not user_data:
+            flash("Login credantials not correct", category="danger")
+            return redirect(url_for(".login"))
+        
+        user = User(**user_data)
+
+        if user and pbkdf2_sha256.verify(form.password.data, user.password):
+            session["user_id"] = user._id
+            session["email"] = user.email
+            
+            return redirect(url_for(".index"))
+
+        flash("Login credantials not correct", category="danger")
+
+    return render_template("login.html", title="HeadHouse - Login", form=form)    
+
+
+
+@pages.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for(".login"))
+
+
 @pages.route("/budget_manager")
+@login_required
 def budget_manager():
+    user_data = current_app.db.user.find_one({"email": session["email"]})
+    user = User(**user_data)
     date = request.args.get("date")
 
-    getExpenses = current_app.db.expense.find({"date": date})
+    getExpenses = current_app.db.expense.find({"date": date, "_id": {"$in": user.expenses}})
     expenses = [Expense(**expense) for expense in getExpenses]
 
-    getBudget = current_app.db.budget.find_one({"date": date})
+    getBudget = current_app.db.budget.find_one({"date": date, "_id": {"$in": user.budgets}})
     budget_amount = 0
     
     if getBudget is None:
@@ -79,7 +152,37 @@ def budget_manager():
         )
 
 
+@pages.route("/budget_manager/set_budget/<date>", methods=["GET", "POST"])
+@login_required
+def set_budget(date):
+    form = BudgetForm()
+
+    if form.validate_on_submit():
+        budget = Budget(
+            _id= uuid.uuid4().hex,
+            amount = form.amount.data,
+            date=date
+        )
+        
+        current_app.db.budget.delete_many({"date": date})
+        current_app.db.budget.insert_one(asdict(budget))
+       
+        current_app.db.user.update_one(
+            {"_id": session["user_id"]}, 
+            {"$push": {"budgets": budget._id}}
+        )
+
+        return redirect(url_for(".budget_manager", date=date))
+    
+    return render_template(
+        "set_budget.html", 
+        title="HEADHOUSE | BudgetManager - SetBudget",
+        form=form
+        )
+
+
 @pages.route("/budget_manager/add_expense/<date>", methods=["GET", "POST"])
+@login_required
 def add_expense(date):
     form = ExpenseForm()
 
@@ -92,6 +195,10 @@ def add_expense(date):
             date=date
         )
         current_app.db.expense.insert_one(asdict(expense))
+        current_app.db.user.update_one(
+            {"_id": session["user_id"]}, 
+            {"$push": {"expenses": expense._id}}
+        )
 
         return redirect(url_for(".budget_manager", date=date))
 
@@ -102,30 +209,9 @@ def add_expense(date):
         )
 
 
-@pages.route("/budget_manager/set_budget/<date>", methods=["GET", "POST"])
-def set_budget(date):
-    form = BudgetForm()
-
-    if form.validate_on_submit():
-        budget = Budget(
-            _id= uuid.uuid4().hex,
-            amount = form.amount.data,
-            date=date
-        )
-        
-        current_app.db.budget.delete_one({"date": date})
-        current_app.db.budget.insert_one(asdict(budget))
-
-        return redirect(url_for(".budget_manager", date=date))
-    
-    return render_template(
-        "set_budget.html", 
-        title="HEADHOUSE | BudgetManager - SetBudget",
-        form=form
-        )
-
 
 @pages.route("/budget_manager/edit_expense/<date>/<expense_id>", methods=["GET", "POST"])
+@login_required
 def edit_expense(date, expense_id):
     expense = Expense(**current_app.db.expense.find_one({"_id": expense_id}))
     form = ExpenseForm(obj=expense)
@@ -149,6 +235,7 @@ def edit_expense(date, expense_id):
 
 
 @pages.route("/budget_manager/delete_expense/<date>/<expense_id>", methods=["GET", "POST"])
+@login_required
 def delete_expense(date, expense_id):
     expense = current_app.db.expense.find_one({"_id": expense_id})
 
