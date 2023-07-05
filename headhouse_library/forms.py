@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField, StringField, SubmitField, TextAreaField, URLField, PasswordField
+from wtforms import FloatField, StringField, SubmitField, TextAreaField, SelectField, URLField, PasswordField
 from wtforms.validators import InputRequired, NumberRange, Email, Length, EqualTo
 
 class BudgetForm(FlaskForm):
@@ -15,7 +15,7 @@ class BudgetForm(FlaskForm):
 
 class ExpenseForm(FlaskForm):
     title = StringField("Title", validators = [InputRequired()])
-    type = StringField("Type", validators = [InputRequired()])
+    type = SelectField('Type', choices=[('Food', 'Food'), ('Loans', 'Loans'), ('Other', 'Other')])
 
     amount = FloatField(
         "Amount",

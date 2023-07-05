@@ -192,7 +192,7 @@ def add_expense(date):
     if form.validate_on_submit():
         expense = Expense(
             _id=uuid.uuid4().hex,
-            title=form.title.data,
+            title=(form.title.data).capitalize(),
             type=form.type.data,
             amount=form.amount.data,
             date=date
