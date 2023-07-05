@@ -5,6 +5,7 @@
   
     --background-color: #1c2023;
     --background-color-2: #343a3d;
+    --background-color-3: #24292d;
     --accent-colour: #f56565;
     --accent-colour-2: #ff4747;
     --accent-colour-3: #31d200;
@@ -81,7 +82,7 @@
   
   .main {
     flex-grow: 1;
-    background-color: var(--background-color-2);
+    background-color: var(--background-color);
   }
   
   .header {
