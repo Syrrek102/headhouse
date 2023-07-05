@@ -51,19 +51,15 @@
   }
   
   html {
-    /* Sets global font size on small devices */
     font-size: 12px;
   }
   
-  /* When the screen width hits 960px, we increase the global font size to 14px. This changes
-     the scale of all of our relative units (the rems), keeping everything in proportion */
   @media screen and (min-width: 60em) {
     html {
       font-size: 14px;
     }
   }
   
-  /* When the screen width hits 1200px, we once again increase the global font size, this time to 16px */
   @media screen and (min-width: 75em) {
     html {
       font-size: 18px;
@@ -73,7 +69,6 @@
   body {
     display: flex;
     flex-direction: column;
-    /* Sets the shared font characteristics, so that that they can be inherited globally */
     font-family: "Public Sans", sans-serif;
     color: var(--text-dark);
     line-height: 1.45;
@@ -86,13 +81,7 @@
   
   .main {
     flex-grow: 1;
-    padding: 3rem 1.5rem 2rem 1.5rem
-  }
-  
-  @media screen and (min-width: 30em) {
-    .main {
-      padding-top: 1rem;
-    }
+    background-color: var(--background-color-2);
   }
   
   .header {
@@ -105,22 +94,14 @@
     align-items: center;
     height: 4rem;
     color: inherit;
-    text-decoration: none;
+    margin-right: 1rem;
   }
   
   .logo__icon {
     width: 2.5rem;
     height: 2.5rem;
   }
-  
-  .header__logo:hover {
-    color: var(--accent-colour);
-  }
-  
-  .logo__icon {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
+
   
   .logo__name {
     margin-left: 0.5rem;
@@ -189,33 +170,55 @@
   .link:hover {
     text-decoration: underline;
   }
-  
+
+  .budget-left__info {
+    color: var(--accent-colour-3);
+    white-space: nowrap;
+  }
+
+  .budget-left__info--deficit {
+    color: var(--accent-colour-2);
+    white-space: nowrap;
+    font-size: 140%;
+  }
+
+  .warning {
+    padding: 0.1rem 0.5rem;
+    background-color: var(--accent-colour-2);
+  }
+
+  .expenses__info {
+    color: var(--accent-colour);
+    white-space: nowrap;
+  }
 
   .body__section {
     display: flex;
     margin: 0 auto;
+    padding-top: 2rem;
     width: 70%;
+    height: 100%;
+    background-color: var(--background-color);
   }
  
   .section__left {
     flex-basis: 70%;
-    background-color: var(--background-color);
     padding-right: 20px;
+    padding-left: 3rem;
   }
 
   .section__right {
     flex-basis: 30%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     text-align: center;
-    background-color: var(--background-color);
-    padding: 20px;
-    /* border-left: 1px solid white; */
+    padding-top: 2rem;
   } 
 
   .block__text {
+    display: flex;
+    flex-direction: column;
     font-size: 24px;
   }
 
@@ -226,10 +229,9 @@
 .total__budget {
     align-items: center;
     background-color: var(--accent-colour-3);
-    height: 7.5rem;
-    width: 15rem;
     text-align: center;
     border-radius: 1rem;
+    padding: 1rem;
 }
 
 .set__budget {
@@ -256,4 +258,14 @@
   display: block;
   margin: 0 auto;
   width: 70%;
+}
+
+.body__section--calendar {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  width: 70%;
+  height: 100%;
+  background-color: var(--background-color);
+  padding-top: 5rem;
 }

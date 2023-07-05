@@ -9,7 +9,7 @@
         <section class="section__left">
 
             <div class="header__calendar">
-                <h1>{{ date }}</h1>
+                <h1>{{ date[:-3] }}</h1>
             </div>
 
             <a class="button__link" href="{{ url_for('pages.add_expense', date=date) }}">
@@ -18,8 +18,8 @@
             
             <table class="table">
                 <colgroup>
-                    <col style="width: 60%">
-                    <col style="width: 25%">
+                    <col style="width: 50%">
+                    <col style="width: 35%">
                     <col style="width: 15%">
                 </colgroup>
     
@@ -69,10 +69,17 @@
                 </div>
             </div>
             <div class="section__right-block">
-                <p class="block__text">Budget Left: <span class="link">{{ budget_left }}</span> </p>
+                <p class="block__text">Budget Left 
+                {% if budget_left < 0 %}
+                    <p class="warning">Warning! You are below your budget.</p>
+                    <span class="budget-left__info--deficit">{{ budget_left }}</span>
+                {% else %}
+                    <span class="budget-left__info">{{ budget_left }}</span>
+                {% endif %} 
+                </p>
             </div>
             <div class="section__right-block">
-                <p class="block__text">Expenses: <span class="link">{{ all_expenses }}</span> </p>
+                <p class="block__text">Expenses <span class="expenses__info">{{ all_expenses }}</span> </p>
             </div>
         </section>
     </div>

@@ -6,47 +6,45 @@
 {% endblock %}
 
 {% block main_content %}
-<section class="menu__section">
-    <div class="header__calendar">
-        <h1>{{ date }}</h1>
-    </div>
-
-    <p>Are you sure you want to delete the following expense?</p>
-
-    <table class="table">
-        <colgroup>
-            <col style="width: 60%">
-            <col style="width: 25%">
-            <col style="width: 15%">
-        </colgroup>
-
-        <thead>
-            <th class="table__cell table__cell--header">Title</th>
-            <th class="table__cell table__cell--header">Type</th>
-            <th class="table__cell table__cell--header">Amount</th>
-            <th class="table__cell table__cell--header"></th>
-            <th class="table__cell table__cell--header"></th>
-        </thead>
-
-        <tbody>
-            <tr>
-                <td class="table__cell table_cell--body">
-                    <p class="table__expenseTitle">{{ expense.title }}</p>
-                </td>
-                <td class="table__cell table_cell--body">
-                    <p class="table__expenseType">{{ expense.type }}</p>
-                </td>
-                <td class="table__cell table_cell--body">
-                    <p class="table__expenseAmount">${{ expense.amount }}</p>
-            </tr>
-        </tbody>
-    </table>
-
-
-    <form action="{{ url_for('pages.delete_expense', date=date, expense_id=expense._id) }}" method="POST">
-        <button class="button" submit>Delete</button>
-        <a class="link" href="{{ url_for('pages.budget_manager', date=date) }}">Cancel</a>
-    </form>
-
-</section>
+<div class="body__section">
+    <section class="menu__section">
+        <h2>Are you sure you want to delete the following expense?</h2>
+    
+        <table class="table">
+            <colgroup>
+                <col style="width: 50%">
+                <col style="width: 35%">
+                <col style="width: 15%">
+            </colgroup>
+    
+            <thead>
+                <th class="table__cell table__cell--header">Title</th>
+                <th class="table__cell table__cell--header">Type</th>
+                <th class="table__cell table__cell--header">Amount</th>
+                <th class="table__cell table__cell--header"></th>
+                <th class="table__cell table__cell--header"></th>
+            </thead>
+    
+            <tbody>
+                <tr>
+                    <td class="table__cell table_cell--body">
+                        <p class="table__expenseTitle">{{ expense.title }}</p>
+                    </td>
+                    <td class="table__cell table_cell--body">
+                        <p class="table__expenseType">{{ expense.type }}</p>
+                    </td>
+                    <td class="table__cell table_cell--body">
+                        <p class="table__expenseAmount">${{ expense.amount }}</p>
+                </tr>
+            </tbody>
+        </table>
+    
+    
+        <form action="{{ url_for('pages.delete_expense', date=date, expense_id=expense._id) }}" method="POST">
+            <button class="button" submit>Delete</button>
+            <a class="link" href="{{ url_for('pages.budget_manager', date=date) }}">Cancel</a>
+        </form>
+    
+    </section>
+</div>
 {% endblock %}

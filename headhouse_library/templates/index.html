@@ -6,22 +6,24 @@
 {% endblock %}
 
 {% block main_content %}
-<header class="header__calendar">
-    <h1>CALENDAR</h1>
-</header>
-<section class="menu__section">
-    <div class="dates">
-        {% for date in date_range(selected_date) %}
-            <a 
-            class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
-            href="{{ url_for('pages.budget_manager', date=date) }}"
-            >
-                    <time class="date" datetime="{{ date }}">
-                    <span>{{ date.strftime("%b") }}</span>
-                    <span>{{ date.strftime("%Y") }}</span>
-                </time>
-            </a>
-        {% endfor %}
-    </div>
-</section>
+<div class="body__section--calendar">
+    <header class="header__calendar">
+        <h1>CALENDAR</h1>
+    </header>
+    <section class="menu__section">
+        <div class="dates">
+            {% for date in date_range(selected_date) %}
+                <a 
+                class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
+                href="{{ url_for('pages.budget_manager', date=date) }}"
+                >
+                        <time class="date" datetime="{{ date }}">
+                        <span>{{ date.strftime("%b") }}</span>
+                        <span>{{ date.strftime("%Y") }}</span>
+                    </time>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+</div>
 {% endblock %}

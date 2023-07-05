@@ -15,7 +15,17 @@ class BudgetForm(FlaskForm):
 
 class ExpenseForm(FlaskForm):
     title = StringField("Title", validators = [InputRequired()])
-    type = SelectField('Type', choices=[('Food', 'Food'), ('Loans', 'Loans'), ('Other', 'Other')])
+    type = SelectField('Type', choices=[
+        ('Food', 'Food'), 
+        ('Loans', 'Loans'),
+        ('Housing/Rent expenses', 'Housing/Rent expenses'), 
+        ('Media and communication', 'Media and communication'),  
+        ('Travel and vacations', 'Travel and vacations'),
+        ('Donations and gifts', 'Donations and gifts'),
+        ('Entertainment and hobbies', 'Entertainment and hobbies'),
+        ('Other', 'Other')
+        ]
+    )
 
     amount = FloatField(
         "Amount",
