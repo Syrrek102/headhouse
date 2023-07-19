@@ -217,6 +217,10 @@
     padding-top: 2rem;
   } 
 
+  .section__right-block {
+    display: block;
+  }
+
   .block__text {
     display: flex;
     flex-direction: column;

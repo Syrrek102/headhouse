@@ -72,15 +72,24 @@
                 <p class="block__text">Budget Left 
                 {% if budget_left < 0 %}
                     <p class="warning">Warning! You are below your budget.</p>
-                    <span class="budget-left__info--deficit">{{ budget_left }}</span>
+                    <span class="budget-left__info--deficit">$ {{ budget_left }}</span>
                 {% else %}
-                    <span class="budget-left__info">{{ budget_left }}</span>
+                    <span class="budget-left__info">$ {{ budget_left }}</span>
                 {% endif %} 
                 </p>
             </div>
+
             <div class="section__right-block">
-                <p class="block__text">Expenses <span class="expenses__info">{{ all_expenses }}</span> </p>
+                <p class="block__text">Expenses <span class="expenses__info">$ {{ all_expenses }}</span></p>
             </div>
+
+            <div class="section__right--categories">
+                <p class="block__text">Categories List</p>
+                {% for category, amount in category_expenses.items() %}
+                    <p class="block__text">{{ category }} = $ {{ amount }}</p>
+                {% endfor %}
+            </div>
+
         </section>
     </div>
 {%endblock%}

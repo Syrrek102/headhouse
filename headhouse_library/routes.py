@@ -23,14 +23,6 @@ pages = Blueprint(
 )
 
 
-def login_required(route):
-    @functools.wraps(route)
-    def route_wrapper(*args, **kwargs):
-        if session.get("email") is None:
-            return redirect(url_for(".login"))
-        return route(*args, **kwargs)
-    return route_wrapper
-
 
 def date_range(selected_date: datetime.date):
     start_year = selected_date.year
@@ -38,6 +30,15 @@ def date_range(selected_date: datetime.date):
         datetime.date(year=start_year, month=month, day=1) for month in range(1, 13)
     ]
     return dates
+
+
+def login_required(route):
+    @functools.wraps(route)
+    def route_wrapper(*args, **kwargs):
+        if session.get("email") is None:
+            return redirect(url_for(".login"))
+        return route(*args, **kwargs)
+    return route_wrapper
 
 
 @pages.route("/register", methods=["GET", "POST"])
@@ -109,7 +110,7 @@ def index():
         title="HEADHOUSE",
         date_list=date_range(selected_date),
         selected_date=selected_date,
-        datetime=datetime
+        datetime=datetime,
     )
 
 
@@ -139,6 +140,16 @@ def budget_manager():
     total_expenses = sum(expense.amount for expense in expenses)
     budget_left = budget_amount - total_expenses
 
+    category_expenses = {}
+    for expense in expenses:
+        category = expense.type
+        if category in category_expenses:
+            category_expenses[category] += expense.amount
+        else:
+            category_expenses[category] = expense.amount
+
+    sorted_category_expenses = dict(sorted(category_expenses.items(), key=lambda item: item[1], reverse=True))
+
     return render_template(
         "budget_manager.html", 
         title="HEADHOUSE | BudgetManager",
@@ -146,7 +157,8 @@ def budget_manager():
         expenses_data=expenses,
         budget_left=budget_left,
         all_expenses=total_expenses,
-        date=date
+        date=date,
+        category_expenses=sorted_category_expenses  
     )
 
 
