@@ -32,29 +32,12 @@ def login_required(route):
     return route_wrapper
 
 
-def date_range(start: datetime.date):
+def date_range(selected_date: datetime.date):
+    start_year = selected_date.year
     dates = [
-        start.replace(day=1) + relativedelta.relativedelta(months=diff) for diff in range(-5, 6)
+        datetime.date(year=start_year, month=month, day=1) for month in range(1, 13)
     ]
     return dates
-
-
-@pages.route("/")
-@login_required
-def index():
-    date_str = request.args.get("date")
-
-    if date_str:
-        selected_date = datetime.date.fromisoformat(date_str)
-    else:
-        selected_date = datetime.date.today()
-
-    return render_template(
-        "index.html", 
-        title="HEADHOUSE",
-        date_range=date_range,
-        selected_date=selected_date,
-    )
 
 
 @pages.route("/register", methods=["GET", "POST"])
@@ -109,6 +92,25 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for(".login"))
+
+
+@pages.route("/")
+@login_required
+def index():
+    date_str = request.args.get("date")
+
+    if date_str:
+        selected_date = datetime.date.fromisoformat(date_str)
+    else:
+        selected_date = datetime.date.today()
+
+    return render_template(
+        "index.html", 
+        title="HEADHOUSE",
+        date_list=date_range(selected_date),
+        selected_date=selected_date,
+        datetime=datetime
+    )
 
 
 @pages.route("/budget_manager")
@@ -254,3 +256,5 @@ def delete_expense(date, expense_id):
         expense=expense,
         date=date
     )
+
+    

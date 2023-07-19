@@ -12,18 +12,48 @@
     </header>
     <section class="menu__section">
         <div class="dates">
-            {% for date in date_range(selected_date) %}
+            <a 
+            class="dates__link dates__link--arrow" 
+            href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year-1)) }}">
+                &#8592; Poprzedni rok
+            </a>
+            <a 
+            class="dates__link dates__link--current-month" 
+            href="{{ url_for('pages.index', date=datetime.date.today()) }}">
+                Bieżący rok
+            </a>
+            <a 
+            class="dates__link dates__link--arrow" 
+            href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year+1)) }}">
+                Następny rok &#8594;
+            </a>
+        </div>
+    </section>
+    <section class="menu__section">
+        <div class="dates">
+            {% for date in date_list %}
                 <a 
-                class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
+                class="dates__link {{ 'dates__link--current' if loop.index0==selected_date.month-1 else '' }}" 
                 href="{{ url_for('pages.budget_manager', date=date) }}"
                 >
-                        <time class="date" datetime="{{ date }}">
+                    <time class="date" datetime="{{ date }}">
                         <span>{{ date.strftime("%b") }}</span>
                         <span>{{ date.strftime("%Y") }}</span>
                     </time>
                 </a>
             {% endfor %}
         </div>
+    </section>
+    <section class="menu__section">
+        <div>
+            <span>All Expenses</span>
+            <span>$ 20202.00</span>
+        </div>
+        <div>
+            <span>Savings</span>
+            <span>$ 200.00</span>
+        </div>
+        
     </section>
 </div>
 {% endblock %}
