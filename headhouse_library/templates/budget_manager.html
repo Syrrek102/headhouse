@@ -18,9 +18,9 @@
             
             <table class="table">
                 <colgroup>
-                    <col style="width: 50%">
-                    <col style="width: 35%">
-                    <col style="width: 15%">
+                    <col style="width: 30%">
+                    <col style="width: 45%">
+                    <col style="width: 45%">
                 </colgroup>
     
                 <thead>
@@ -41,7 +41,7 @@
                                 <p class="table__expenseType">{{ expense.type }}</p>
                             </td>
                             <td class="table__cell table_cell--body">
-                                <p class="table__expenseAmount">${{ expense.amount }}</p>
+                                <p class="table__expenseAmount">$ {{ expense.amount }}</p>
                             </td>
                             <td class="table__cell table_cell--body">
                                 <a class="link" href="{{ url_for('pages.edit_expense', date=date, expense_id=expense._id) }}">Edit</a>
@@ -84,10 +84,22 @@
             </div>
 
             <div class="section__right--categories">
-                <p class="block__text">Categories List</p>
-                {% for category, amount in category_expenses.items() %}
-                    <p class="block__text">{{ category }} = $ {{ amount }}</p>
-                {% endfor %}
+                <table class="categories__table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, amount in category_expenses.items() %}
+                            <tr>
+                                <td>{{ category }}</td>
+                                <td>$ {{ amount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
         </section>

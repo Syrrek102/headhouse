@@ -3,7 +3,7 @@
     width: 100%;
     margin: 0 auto;
     border-spacing: 0;
-    background-color: var(--background-color-2);
+    background-color: var(--background-color-3);
 }
 
 .table__cell {
@@ -13,8 +13,9 @@
 .table__cell--header {
     text-align: left;
     padding: 0.5rem 1rem;
-    border-bottom: var(--border);
-    background-color: var(--background-color)
+    border-bottom: var(--border_body);
+    background-color: var(--background-color-2);
+    text-transform: uppercase;
 }
 
 .table_cell--body {
@@ -31,8 +32,7 @@
 
 .table__expenseAmount {
     font-size: 1.5rem;
-    background-color: var(--accent-colour-3);
-    text-align: center;
+    color: var(--accent-colour-3);
     border-radius: 1rem;
     padding: 0 0.7rem;
 }
@@ -61,7 +61,7 @@
 }
 
 .dates__link:hover {
-    background-color: #838383;
+    background-color: #b9b9b9;
 }
 
 .dates__link--current:hover {
