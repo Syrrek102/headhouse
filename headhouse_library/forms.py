@@ -23,6 +23,7 @@ class ExpenseForm(FlaskForm):
         ('Travel and vacations', 'Travel and vacations'),
         ('Donations and gifts', 'Donations and gifts'),
         ('Entertainment and hobbies', 'Entertainment and hobbies'),
+        ('Shopping', 'Shopping'),
         ('Other', 'Other')
         ]
     )
