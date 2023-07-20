@@ -6,7 +6,7 @@ class BudgetForm(FlaskForm):
     amount = FloatField(
         "Amount",
         validators=[InputRequired(),
-                    NumberRange(min=0.01, message="Dont add empty expense")
+                    NumberRange(min=0, message="Dont add empty expense")
         ]
     )
 

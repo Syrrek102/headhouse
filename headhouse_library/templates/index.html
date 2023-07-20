@@ -44,5 +44,33 @@
             {% endfor %}
         </div>
     </section>
+    <section class="menu__section">
+            <div class="menu__section--block">
+                <p class="block__text">Annual Expenses <span class="expenses__info">$ {{ total_expenses }}</span></p>
+            </div>
+        
+            <div class="menu__section--block">
+                <p class="block__text">Annual Savings <span class="budget-left__info">$ {{ savings }}</span></p>
+            </div>
+            
+            <div class="menu__section--block">
+                <table class="categories__table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, amount in category_expenses.items() %}
+                            <tr>
+                                <td>{{ category }}</td>
+                                <td>$ {{ amount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </section>
+        </div>
 </div>
 {% endblock %}

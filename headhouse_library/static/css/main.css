@@ -255,6 +255,7 @@
   .categories__table td {
     padding: 0.5rem 1rem;
     border: 1px solid var(--border_body);
+    text-align: left;
   }
   
   .categories__table th {
@@ -317,10 +318,10 @@
   margin: 0rem 0rem 1rem 0rem
 }
 
-.menu__section {
+.menu__section{
   display: block;
   margin: 0 auto;
-  width: 70%;
+  width: 80%;
 }
 
 .body__section--calendar {
@@ -330,5 +331,4 @@
   width: 70%;
   height: 100%;
   background-color: var(--background-color);
-  padding-top: 5rem;
 }
