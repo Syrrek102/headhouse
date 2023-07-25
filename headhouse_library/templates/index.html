@@ -8,22 +8,22 @@
 {% block main_content %}
 <div class="body__section--calendar">
     <header class="header__calendar">
-        <h1>CALENDAR</h1>
+        <h1>> CALENDAR <</h1>
     </header>
     <section class="menu__section">
         <div class="dates">
             <a 
-            class="dates__link dates__link--arrow" 
+            class="calendar__year_navigation calendar__year_navigation--arrow" 
             href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year-1)) }}">
                 &#8592; Poprzedni rok
             </a>
             <a 
-            class="dates__link dates__link--current-month" 
+            class="calendar__year_navigation calendar__year_navigation--current-month" 
             href="{{ url_for('pages.index', date=datetime.date.today()) }}">
                 Bieżący rok
             </a>
             <a 
-            class="dates__link dates__link--arrow" 
+            class="calendar__year_navigation calendar__year_navigation--arrow" 
             href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year+1)) }}">
                 Następny rok &#8594;
             </a>
@@ -50,7 +50,11 @@
             </div>
         
             <div class="menu__section--block">
-                <p class="block__text">Annual Savings <span class="budget-left__info">$ {{ savings }}</span></p>
+                {% if savings < 0 %}
+                    <p class="block__text">Budget Deficit <span class="expenses__info">$ {{ savings }}</span></p>
+                {% else %}
+                    <p class="block__text">Annual Savings <span class="budget-left__info">$ {{ savings }}</span></p>
+                {% endif %}
             </div>
             
             <div class="menu__section--block">

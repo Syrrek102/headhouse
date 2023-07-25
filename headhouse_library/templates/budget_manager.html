@@ -8,8 +8,8 @@
     <div class="body__section">
         <section class="section__left">
 
-            <div class="header__calendar">
-                <h1>{{ date[:-3] }}</h1>
+            <div class="budgetmanager__date">
+                <span>> {{ formatted_date }} <</span>
             </div>
 
             <a class="button__link" href="{{ url_for('pages.add_expense', date=date) }}">

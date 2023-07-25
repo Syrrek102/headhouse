@@ -101,8 +101,6 @@ def get_category_expenses(user, start_date, end_date):
     sorted_category_expenses = dict(sorted(category_expenses.items(), key=lambda item: item[1], reverse=True))
     return sorted_category_expenses
 
-
-
 def login_required(route):
     @functools.wraps(route)
     def route_wrapper(*args, **kwargs):
@@ -188,7 +186,7 @@ def index():
 
     budget_amount = total_budget
     budget_left = budget_amount - total_expenses
-    savings = budget_left if budget_left >= 0 else 0
+    savings = round(budget_left, 3)
 
     return render_template(
         "index.html",
@@ -203,14 +201,15 @@ def index():
         savings=savings
     )
 
-
-
 @pages.route("/budget_manager")
 @login_required
 def budget_manager():
     user_data = current_app.db.user.find_one({"email": session["email"]})
     user = User(**user_data)
     date = request.args.get("date")
+
+    formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    formatted_date = formatted_date.strftime("%B %Y").upper()
 
     get_expenses = current_app.db.expense.find({"date": date, "_id": {"$in": user.expenses}})
     expenses = [Expense(**expense) for expense in get_expenses]
@@ -228,8 +227,9 @@ def budget_manager():
     else:
         budget_amount = get_budget["amount"]
 
-    total_expenses = sum(expense.amount for expense in expenses)
+    total_expenses = round(sum(expense.amount for expense in expenses), 2)
     budget_left = budget_amount - total_expenses
+    budget_left_round = round(budget_left, 2)
 
     category_expenses = {}
     for expense in expenses:
@@ -246,9 +246,10 @@ def budget_manager():
         title="HEADHOUSE | BudgetManager",
         budget_amount=budget_amount,
         expenses_data=expenses,
-        budget_left=budget_left,
+        budget_left=budget_left_round,
         all_expenses=total_expenses,
         date=date,
+        formatted_date=formatted_date,
         category_expenses=sorted_category_expenses  
     )
 

@@ -81,6 +81,20 @@
     display: none;
 }
 
+.calendar__year_navigation {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    background-color: var(--background-color-3);
+}
+
+.calendar__year_navigation:hover {
+    background-color: var(--accent-colour);
+}
+
 @media screen and (min-width: 25rem) {
     .dates__link:nth-of-type(2),
     .dates__link:nth-last-child(2) {
