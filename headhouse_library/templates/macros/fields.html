@@ -8,3 +8,18 @@
         {% endfor %}
     </div>
 {% endmacro %}
+
+{% macro render_select_field(field) %}
+    <div class="form__group">
+        {{ field.label(class="form__label") }}
+        <select name="{{ field.name }}" class="form__field">
+            {% for value, label in field.choices %}
+                <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+            
+            {% for error in field.errors %}
+             <span class="form__error">{{ error }}</span>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}

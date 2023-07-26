@@ -6,22 +6,75 @@
 {% endblock %}
 
 {% block main_content %}
-<header class="header__calendar">
-    <h1>CALENDAR</h1>
-</header>
-<section class="menu__section">
-    <div class="dates">
-        {% for date in date_range(selected_date) %}
+<div class="body__section--calendar">
+    <header class="header__calendar">
+        <h1>> CALENDAR <</h1>
+    </header>
+    <section class="menu__section">
+        <div class="dates">
             <a 
-            class="dates__link {{ 'dates__link--current' if loop.index0==5 else '' }}" 
-            href="{{ url_for('pages.budget_manager', date=date) }}"
-            >
-                    <time class="date" datetime="{{ date }}">
-                    <span>{{ date.strftime("%b") }}</span>
-                    <span>{{ date.strftime("%Y") }}</span>
-                </time>
+            class="calendar__year_navigation calendar__year_navigation--arrow" 
+            href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year-1)) }}">
+                &#8592; PREVIOUS YEAR
             </a>
-        {% endfor %}
-    </div>
-</section>
+            <a 
+            class="calendar__year_navigation calendar__year_navigation--current-month" 
+            href="{{ url_for('pages.index', date=datetime.date.today()) }}">
+                CURRENT YEAR
+            </a>
+            <a 
+            class="calendar__year_navigation calendar__year_navigation--arrow" 
+            href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year+1)) }}">
+                NEXT YEAR &#8594;
+            </a>
+        </div>
+    </section>
+    <section class="menu__section">
+        <div class="dates">
+            {% for date in date_list %}
+                <a 
+                class="dates__link {{ 'dates__link--current' if loop.index0==selected_date.month-1 else '' }}" 
+                href="{{ url_for('pages.budget_manager', date=date) }}"
+                >
+                    <time class="date" datetime="{{ date }}">
+                        <span>{{ date.strftime("%b") }}</span>
+                        <span>{{ date.strftime("%Y") }}</span>
+                    </time>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+    <section class="menu__section">
+            <div class="menu__section--block">
+                <p class="block__text">Annual Expenses <span class="expenses__info">$ {{ total_expenses }}</span></p>
+            </div>
+        
+            <div class="menu__section--block">
+                {% if savings < 0 %}
+                    <p class="block__text">Budget Deficit <span class="expenses__info">$ {{ savings }}</span></p>
+                {% else %}
+                    <p class="block__text">Annual Savings <span class="budget-left__info">$ {{ savings }}</span></p>
+                {% endif %}
+            </div>
+            
+            <div class="menu__section--block">
+                <table class="categories__table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, amount in category_expenses.items() %}
+                            <tr>
+                                <td>{{ category }}</td>
+                                <td>$ {{ amount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </section>
+        </div>
+</div>
 {% endblock %}

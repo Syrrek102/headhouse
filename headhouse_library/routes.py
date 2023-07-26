@@ -11,17 +11,95 @@ from flask import (
     flash,
     session
 )
-from dateutil import relativedelta
+from dateutil import relativedelta, parser
 from dataclasses import asdict
 from passlib.hash import pbkdf2_sha256
 from headhouse_library.models import Budget, Expense, User
-from headhouse_library.forms import BudgetForm, ExpenseForm, RegisterForm, LoginForm
+from headhouse_library.forms import BudgetForm, ExpenseForm, RegisterForm, LoginForm, DeleteExpenseForm
 
 
 pages = Blueprint(
     "pages", __name__, template_folder="templates", static_folder="static"
 )
 
+
+
+def date_range(selected_date: datetime.date):
+    start_year = selected_date.year
+    dates = [
+        datetime.date(year=start_year, month=month, day=1) for month in range(1, 13)
+    ]
+    return dates
+
+def get_total_budget(user, start_date, end_date):
+    pipeline = [
+        {
+            "$match": {
+                "date": {
+                    "$gte": start_date.strftime("%Y-%m-%d"),
+                    "$lte": end_date.strftime("%Y-%m-%d")
+                },
+                "_id": {"$in": user.budgets}
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "total_budget": {"$sum": "$amount"}
+            }
+        }
+    ]
+
+    result = current_app.db.budget.aggregate(pipeline)
+    total_budget = next(result, {"total_budget": 0})["total_budget"]
+    return total_budget
+
+def get_total_expenses(user, start_date, end_date):
+    pipeline = [
+        {
+            "$match": {
+                "date": {
+                    "$gte": start_date.strftime("%Y-%m-%d"),
+                    "$lte": end_date.strftime("%Y-%m-%d")
+                },
+                "_id": {"$in": user.expenses}
+            }
+        },
+        {
+            "$group": {
+                "_id": None,
+                "total_expenses": {"$sum": "$amount"}
+            }
+        }
+    ]
+
+    result = current_app.db.expense.aggregate(pipeline)
+    total_expenses = next(result, {"total_expenses": 0})["total_expenses"]
+    return total_expenses
+
+def get_category_expenses(user, start_date, end_date):
+    pipeline = [
+        {
+            "$match": {
+                "date": {
+                    "$gte": start_date.strftime("%Y-%m-%d"),
+                    "$lte": end_date.strftime("%Y-%m-%d")
+                },
+                "_id": {"$in": user.expenses}
+            }
+        },
+        {
+            "$group": {
+                "_id": "$type",
+                "total_amount": {"$sum": "$amount"}
+            }
+        }
+    ]
+
+    result = current_app.db.expense.aggregate(pipeline)
+    category_expenses = {category["_id"]: category["total_amount"] for category in result}
+    sorted_category_expenses = dict(sorted(category_expenses.items(), key=lambda item: item[1], reverse=True))
+    return sorted_category_expenses
 
 def login_required(route):
     @functools.wraps(route)
@@ -30,31 +108,6 @@ def login_required(route):
             return redirect(url_for(".login"))
         return route(*args, **kwargs)
     return route_wrapper
-
-
-def date_range(start: datetime.date):
-    dates = [
-        start.replace(day=1) + relativedelta.relativedelta(months=diff) for diff in range(-5, 6)
-    ]
-    return dates
-
-
-@pages.route("/")
-@login_required
-def index():
-    date_str = request.args.get("date")
-
-    if date_str:
-        selected_date = datetime.date.fromisoformat(date_str)
-    else:
-        selected_date = datetime.date.today()
-
-    return render_template(
-        "index.html", 
-        title="HEADHOUSE",
-        date_range=date_range,
-        selected_date=selected_date,
-    )
 
 
 @pages.route("/register", methods=["GET", "POST"])
@@ -111,12 +164,52 @@ def logout():
     return redirect(url_for(".login"))
 
 
+@pages.route("/")
+@login_required
+def index():
+    date_str = request.args.get("date")
+
+    if date_str:
+        selected_date = datetime.date.fromisoformat(date_str)
+    else:
+        selected_date = datetime.date.today()
+
+    start_date = datetime.date(year=selected_date.year, month=1, day=1)
+    end_date = datetime.date(year=selected_date.year, month=12, day=31)
+
+    user_data = current_app.db.user.find_one({"email": session["email"]})
+    user = User(**user_data)
+
+    total_budget = get_total_budget(user,start_date, end_date)
+    total_expenses = get_total_expenses(user, start_date, end_date)
+    category_expenses = get_category_expenses(user, start_date, end_date)
+
+    budget_amount = total_budget
+    budget_left = budget_amount - total_expenses
+    savings = round(budget_left, 3)
+
+    return render_template(
+        "index.html",
+        title="HEADHOUSE",
+        date_list=date_range(selected_date),
+        selected_date=selected_date,
+        datetime=datetime,
+        total_expenses=total_expenses,
+        category_expenses=category_expenses,
+        budget_amount=budget_amount,
+        budget_left=budget_left,
+        savings=savings
+    )
+
 @pages.route("/budget_manager")
 @login_required
 def budget_manager():
     user_data = current_app.db.user.find_one({"email": session["email"]})
     user = User(**user_data)
     date = request.args.get("date")
+
+    formatted_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    formatted_date = formatted_date.strftime("%B %Y").upper()
 
     get_expenses = current_app.db.expense.find({"date": date, "_id": {"$in": user.expenses}})
     expenses = [Expense(**expense) for expense in get_expenses]
@@ -134,17 +227,30 @@ def budget_manager():
     else:
         budget_amount = get_budget["amount"]
 
-    total_expenses = sum(expense.amount for expense in expenses)
+    total_expenses = round(sum(expense.amount for expense in expenses), 2)
     budget_left = budget_amount - total_expenses
+    budget_left_round = round(budget_left, 2)
+
+    category_expenses = {}
+    for expense in expenses:
+        category = expense.type
+        if category in category_expenses:
+            category_expenses[category] += expense.amount
+        else:
+            category_expenses[category] = expense.amount
+
+    sorted_category_expenses = dict(sorted(category_expenses.items(), key=lambda item: item[1], reverse=True))
 
     return render_template(
         "budget_manager.html", 
         title="HEADHOUSE | BudgetManager",
         budget_amount=budget_amount,
         expenses_data=expenses,
-        budget_left=budget_left,
+        budget_left=budget_left_round,
         all_expenses=total_expenses,
-        date=date
+        date=date,
+        formatted_date=formatted_date,
+        category_expenses=sorted_category_expenses  
     )
 
 
@@ -192,7 +298,7 @@ def add_expense(date):
     if form.validate_on_submit():
         expense = Expense(
             _id=uuid.uuid4().hex,
-            title=form.title.data,
+            title=(form.title.data).capitalize(),
             type=form.type.data,
             amount=form.amount.data,
             date=date
@@ -241,8 +347,9 @@ def edit_expense(date, expense_id):
 def delete_expense(date, expense_id):
     user_id = session["user_id"]
     expense = current_app.db.expense.find_one({"_id": expense_id})
+    form = DeleteExpenseForm()
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         current_app.db.expense.delete_one({"_id": expense_id})
         current_app.db.user.update_one({"_id": user_id}, {"$pull": {"expenses": expense_id}})
         flash("Expense deleted successfully.", "success")
@@ -252,5 +359,8 @@ def delete_expense(date, expense_id):
         "delete_expense.html",
         title="HEADHOUSE | BudgetManager - DeleteExpense",
         expense=expense,
-        date=date
+        date=date,
+        form=form
     )
+
+    

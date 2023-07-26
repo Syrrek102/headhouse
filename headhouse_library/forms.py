@@ -1,12 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField, StringField, SubmitField, TextAreaField, URLField, PasswordField
+from wtforms import FloatField, StringField, SubmitField, TextAreaField, SelectField, URLField, PasswordField
 from wtforms.validators import InputRequired, NumberRange, Email, Length, EqualTo
 
 class BudgetForm(FlaskForm):
     amount = FloatField(
         "Amount",
         validators=[InputRequired(),
-                    NumberRange(min=0.01, message="Dont add empty expense")
+                    NumberRange(min=0, message="Dont add empty expense")
         ]
     )
 
@@ -15,7 +15,18 @@ class BudgetForm(FlaskForm):
 
 class ExpenseForm(FlaskForm):
     title = StringField("Title", validators = [InputRequired()])
-    type = StringField("Type", validators = [InputRequired()])
+    type = SelectField('Type', choices=[
+        ('Food', 'Food'), 
+        ('Loans', 'Loans'),
+        ('Housing/Rent expenses', 'Housing/Rent expenses'), 
+        ('Media and communication', 'Media and communication'),  
+        ('Travel and vacations', 'Travel and vacations'),
+        ('Donations and gifts', 'Donations and gifts'),
+        ('Entertainment and hobbies', 'Entertainment and hobbies'),
+        ('Shopping', 'Shopping'),
+        ('Other', 'Other')
+        ]
+    )
 
     amount = FloatField(
         "Amount",
@@ -50,3 +61,6 @@ class LoginForm(FlaskForm):
     email = StringField("Email", validators=[InputRequired(), Email()])
     password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Login")
+
+class DeleteExpenseForm(FlaskForm):
+    submit = SubmitField('Delete')

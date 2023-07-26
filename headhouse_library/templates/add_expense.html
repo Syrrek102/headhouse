@@ -1,4 +1,4 @@
-{% from "macros/fields.html" import render_text_field %}
+{% from "macros/fields.html" import render_text_field, render_select_field %}
 
 {% extends "layout.html" %}
 
@@ -11,12 +11,11 @@
         <div class="form__container">
             {{ form.hidden_tag() }}
             {{ render_text_field(form.title) }}
-            {{ render_text_field(form.type) }}
+            {{ render_select_field(form.type) }}
             {{ render_text_field(form.amount) }}
 
-            <div>
-                {{ form.submit(class_="formbutton formbutton--form") }}
-            </div>
+            
+            {{ form.submit(class_="formbutton formbutton--form") }}
         </div>
     </form>
 {% endblock %}

@@ -1,5 +1,6 @@
 .form {
     margin: 0 auto;
+    margin-top: 5rem;
     max-width: 30rem;
     border: var(--border);
     font-size: 1.2rem;
@@ -13,8 +14,6 @@
     padding: 2.5rem 1.5rem 1.5rem 1.5rem;
 }
 
-/* The following media queries allow for more padding inside the form as the window
-   size increases */
 @media screen and (min-width: 24.75em) {
     .form__container {
         padding-left: 2rem;

@@ -8,8 +8,8 @@
     <div class="body__section">
         <section class="section__left">
 
-            <div class="header__calendar">
-                <h1>{{ date }}</h1>
+            <div class="budgetmanager__date">
+                <span>> {{ formatted_date }} <</span>
             </div>
 
             <a class="button__link" href="{{ url_for('pages.add_expense', date=date) }}">
@@ -18,9 +18,9 @@
             
             <table class="table">
                 <colgroup>
-                    <col style="width: 60%">
-                    <col style="width: 25%">
-                    <col style="width: 15%">
+                    <col style="width: 30%">
+                    <col style="width: 45%">
+                    <col style="width: 45%">
                 </colgroup>
     
                 <thead>
@@ -41,7 +41,7 @@
                                 <p class="table__expenseType">{{ expense.type }}</p>
                             </td>
                             <td class="table__cell table_cell--body">
-                                <p class="table__expenseAmount">${{ expense.amount }}</p>
+                                <p class="table__expenseAmount">$ {{ expense.amount }}</p>
                             </td>
                             <td class="table__cell table_cell--body">
                                 <a class="link" href="{{ url_for('pages.edit_expense', date=date, expense_id=expense._id) }}">Edit</a>
@@ -69,11 +69,39 @@
                 </div>
             </div>
             <div class="section__right-block">
-                <p class="block__text">Budget Left: <span class="link">{{ budget_left }}</span> </p>
+                <p class="block__text">Budget Left 
+                {% if budget_left < 0 %}
+                    <p class="warning">Warning! You are below your budget.</p>
+                    <span class="budget-left__info--deficit">$ {{ budget_left }}</span>
+                {% else %}
+                    <span class="budget-left__info">$ {{ budget_left }}</span>
+                {% endif %} 
+                </p>
             </div>
+
             <div class="section__right-block">
-                <p class="block__text">Expenses: <span class="link">{{ all_expenses }}</span> </p>
+                <p class="block__text">Expenses <span class="expenses__info">$ {{ all_expenses }}</span></p>
             </div>
+
+            <div class="section__right--categories">
+                <table class="categories__table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, amount in category_expenses.items() %}
+                            <tr>
+                                <td>{{ category }}</td>
+                                <td>$ {{ amount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
         </section>
     </div>
 {%endblock%}

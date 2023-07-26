@@ -2,9 +2,21 @@
 
 <header class="header">
     <div class="nav-container">
-        <a href="{{url_for('pages.index')}}" class="header__logo">
-            <span class="logo__name">HeadHouse</span>
-        </a>
+        <nav class="nav">
+            {% if not email %}
+            <span class="header__logo">
+                <span class="logo__name">HeadHouse</span>
+            </span>
+            {% else %}
+            <span class="header__logo">
+                <span class="nav__item">HeadHouse</span>
+            </span>
+            <a href="{{ url_for('pages.index') }}" class="nav__link {{ 'nav__link--active' if request.path == url_for('pages.index') }}">
+                <span class="nav__item">Calendar</span>
+            </a>
+            {% endif %}
+        </nav>
+
         <nav class="nav">
             {% if not email %}
                 <a href="{{ url_for('pages.login') }}" class="nav__link {{ 'nav__link--active' if request.path == url_for('pages.login') }}">
@@ -14,9 +26,6 @@
                     <span class="nav__item">Register</span>
                 </a>
             {% else %}
-                <a href="{{ url_for('pages.index') }}" class="nav__link {{ 'nav__link--active' if request.path == url_for('pages.index') }}">
-                    <span class="nav__item">Calendar</span>
-                </a>
                 <a href="{{ url_for('pages.logout') }}" class="nav__link">
                     <span class="nav__item">Log out</span>
                 </a>
