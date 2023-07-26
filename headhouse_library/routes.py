@@ -15,7 +15,7 @@ from dateutil import relativedelta, parser
 from dataclasses import asdict
 from passlib.hash import pbkdf2_sha256
 from headhouse_library.models import Budget, Expense, User
-from headhouse_library.forms import BudgetForm, ExpenseForm, RegisterForm, LoginForm
+from headhouse_library.forms import BudgetForm, ExpenseForm, RegisterForm, LoginForm, DeleteExpenseForm
 
 
 pages = Blueprint(
@@ -347,8 +347,9 @@ def edit_expense(date, expense_id):
 def delete_expense(date, expense_id):
     user_id = session["user_id"]
     expense = current_app.db.expense.find_one({"_id": expense_id})
+    form = DeleteExpenseForm()
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         current_app.db.expense.delete_one({"_id": expense_id})
         current_app.db.user.update_one({"_id": user_id}, {"$pull": {"expenses": expense_id}})
         flash("Expense deleted successfully.", "success")
@@ -358,7 +359,8 @@ def delete_expense(date, expense_id):
         "delete_expense.html",
         title="HEADHOUSE | BudgetManager - DeleteExpense",
         expense=expense,
-        date=date
+        date=date,
+        form=form
     )
 
     

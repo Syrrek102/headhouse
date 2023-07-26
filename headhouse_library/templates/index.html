@@ -15,17 +15,17 @@
             <a 
             class="calendar__year_navigation calendar__year_navigation--arrow" 
             href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year-1)) }}">
-                &#8592; Poprzedni rok
+                &#8592; PREVIOUS YEAR
             </a>
             <a 
             class="calendar__year_navigation calendar__year_navigation--current-month" 
             href="{{ url_for('pages.index', date=datetime.date.today()) }}">
-                Bieżący rok
+                CURRENT YEAR
             </a>
             <a 
             class="calendar__year_navigation calendar__year_navigation--arrow" 
             href="{{ url_for('pages.index', date=selected_date.replace(year=selected_date.year+1)) }}">
-                Następny rok &#8594;
+                NEXT YEAR &#8594;
             </a>
         </div>
     </section>
