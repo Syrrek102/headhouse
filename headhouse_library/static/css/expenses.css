@@ -7,19 +7,20 @@
 }
 
 .table__cell {
-    padding: 0.2rem 1rem;
+    padding: 0.05rem 1rem;
 }
 
 .table__cell--header {
     text-align: left;
-    padding: 0.5rem 1rem;
+    padding: 0.2rem 1rem;
     border-bottom: var(--border_body);
     background-color: var(--background-color-2);
     text-transform: uppercase;
 }
 
 .table_cell--body {
-  border-bottom: var(--border_body);
+    border-bottom: var(--border_body);
+    padding-top: 0;
 }
 
 .table__expenseTitle {
@@ -33,8 +34,6 @@
 .table__expenseAmount {
     font-size: 1.5rem;
     color: var(--accent-colour-3);
-    border-radius: 1rem;
-    padding: 0 0.7rem;
 }
 
 
